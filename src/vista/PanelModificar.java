@@ -7,8 +7,10 @@ package vista;
 
 import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
-import modelo.Comida;
+import modelo.SeccionDAOImpl;
+
 import modelo.TipoComida;
+import modelo.VentaDAOImpl;
 
 /**
  *
@@ -16,11 +18,11 @@ import modelo.TipoComida;
  */
 public class PanelModificar extends javax.swing.JPanel {
 
-    Comida comida = new Comida();
+ 
+    
+     SeccionDAOImpl s_DAO = new SeccionDAOImpl();
 
-    /**
-     * Creates new form PanelMod
-     */
+    
     public PanelModificar() {
         initComponents();
         try {
@@ -44,7 +46,7 @@ public class PanelModificar extends javax.swing.JPanel {
       
        
 
-        DefaultComboBoxModel<String> modelo = new DefaultComboBoxModel<String>(comida.mostrarComidas());
+        DefaultComboBoxModel<String> modelo = new DefaultComboBoxModel<>(s_DAO.listar());
         cb_seccionM.setModel(modelo);
 
         tf_idMenu.setVisible(false);

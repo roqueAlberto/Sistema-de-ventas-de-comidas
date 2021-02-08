@@ -2,17 +2,14 @@ package ClasePrincipal;
 
 import controlador.Controlador;
 
-import javax.swing.DefaultComboBoxModel;
 import modelo.*;
 
 import vista.Menu;
-import vista.Pedido;
-import vista.Setting;
 
 public class Principal {
 
     public static void main(String[] args) {
- 
+
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Windows".equals(info.getName())) {
@@ -28,32 +25,18 @@ public class Principal {
             java.util.logging.Logger.getLogger(Menu.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(Menu.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } 
+        }
 
-     /*   java.awt.EventQueue.invokeLater(new Runnable() {
-      /*      public void run() { */
+        TipoComida tipo = new TipoComida();
 
-               
-                Comida comida = new Comida();
-                TipoComida tipo = new TipoComida();
-                GestionComida gc = new GestionComida();
-                Cliente cliente = new Cliente();
-                Compra compra = new Compra();
-                GestionVentas gv = new GestionVentas();
+        Cliente cliente = new Cliente();
 
-                Ajustes ajuste = new Ajustes();
-                Gasto gasto = new Gasto();
-                Menu menu = new Menu();
-                
+        Menu menu = new Menu();
+        Seccion seccion = new Seccion();
+        Venta venta = new Venta();
 
-                Controlador controlador = new Controlador(menu, comida, tipo, gc, cliente, compra, gasto, ajuste, gv);
-                controlador.iniciar();
-                menu.setLocationRelativeTo(null);
-                menu.setVisible(true);
-                
-
-           // } 
-    //    });
+        Controlador controlador = new Controlador(menu, tipo, cliente, seccion, venta);
+        controlador.iniciar();
 
     }
 

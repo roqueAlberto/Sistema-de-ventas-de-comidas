@@ -9,7 +9,8 @@ import java.awt.event.ItemEvent;
 import java.util.Vector;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
-import modelo.Comida;
+import modelo.SeccionDAOImpl;
+
 
 /**
  *
@@ -21,7 +22,7 @@ public class PanelAgregar extends javax.swing.JPanel {
      * Creates new form PanelAgregar
      *
      */
-    Comida comida = new Comida();
+     SeccionDAOImpl s_DAO = new SeccionDAOImpl();
 
     public PanelAgregar() {
         initComponents();
@@ -47,7 +48,7 @@ public class PanelAgregar extends javax.swing.JPanel {
         
       
 
-        DefaultComboBoxModel<String> modelo = new DefaultComboBoxModel<String>(comida.mostrarComidas());
+        DefaultComboBoxModel<String> modelo = new DefaultComboBoxModel<>(s_DAO.listar());
 
         cb_agregarS.setModel(modelo);
 

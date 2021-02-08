@@ -7,7 +7,7 @@ package vista;
 
 
 import java.awt.Color;
-import modelo.Comida;
+
 import modelo.TipoComida;
 
 /**

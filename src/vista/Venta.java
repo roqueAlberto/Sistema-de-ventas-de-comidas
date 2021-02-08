@@ -12,22 +12,28 @@ import java.util.Date;
 import javax.swing.JOptionPane;
 import javax.swing.WindowConstants;
 import javax.swing.table.DefaultTableModel;
-import modelo.GestionVentas;
+
+import modelo.VentaDAOImpl;
 
 /**
  *
  * @author Roque
  */
-public class Venta extends javax.swing.JPanel {
+public final class Venta extends javax.swing.JPanel {
 
-    GestionVentas gv;
+    VentaDAOImpl v;
 
     PreparedStatement ps;
     ResultSet rs;
 
     String calendario;
-    
 
+    //====FECHA ACTUAL===
+    Date date = new Date();
+    SimpleDateFormat formato = new SimpleDateFormat("dd-MM-YYYY");
+    String fecha_a = formato.format(date);
+
+    //===================
     public DefaultTableModel modelo_venta = new DefaultTableModel() {
 
         @Override
@@ -62,44 +68,32 @@ public class Venta extends javax.swing.JPanel {
             java.util.logging.Logger.getLogger(Venta.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
 
-        gv = new GestionVentas();
+        v = new VentaDAOImpl();
+
+        tablaV.setModel(v.listar_fechaActual());
+
         
-        gv.setFecha(calendario);
 
-        tablaV.setModel(gv.cargarRegistroInicio());
-
-        obtenerTotal();
-
-        //lb_caja.setText(String.valueOf("$" +gv.sumarTotal(this)));
-        tf_fAlreves.setText(devolverFecha());
-        tf_fAlreves.setVisible(false);
+        lb_caja.setText(String.valueOf("$ " + obtenerTotal()));
+        lb_caja.setVisible(true);
+        tf_fecha.setVisible(false);
 
     }
 
-    public static String devolverFecha() {
-        Date fecha_actual = new Date();
-        SimpleDateFormat formato_fecha_actual = new SimpleDateFormat("YYYY-MM-dd");
-
-        return formato_fecha_actual.format(fecha_actual);
-
-    }
-
-    public void obtenerTotal() {
+    public int obtenerTotal() {
 
         int total = 0;
 
         for (int i = 0; i < tablaV.getRowCount(); i++) {
 
-            total = total + Integer.parseInt(tablaV.getValueAt(i, 5).toString());
+            total += Integer.parseInt(tablaV.getValueAt(i, 5).toString());
 
         }
 
-        lb_caja.setText(String.valueOf("$ " + total));
-        lb_caja.setVisible(true);
+        return total;
 
     }
 
-    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -107,7 +101,7 @@ public class Venta extends javax.swing.JPanel {
         ScrollPanelVenta = new javax.swing.JScrollPane();
         tablaV = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
-        tf_fAlreves = new javax.swing.JTextField();
+        tf_fecha = new javax.swing.JTextField();
         jDateChooser1 = new com.toedter.calendar.JDateChooser();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -226,7 +220,7 @@ public class Venta extends javax.swing.JPanel {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(369, 369, 369)
-                                .addComponent(tf_fAlreves, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(tf_fecha, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -247,7 +241,7 @@ public class Venta extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(26, 26, 26)
-                        .addComponent(tf_fAlreves, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(tf_fecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(84, 84, 84))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -280,38 +274,37 @@ public class Venta extends javax.swing.JPanel {
 
         try {
 
-            Date date = this.jDateChooser1.getDate();
-
+            //Date date = this.jDateChooser1.getDate();
             long d = date.getTime();
-            java.sql.Date fecha = new java.sql.Date(d);
-            calendario = String.valueOf(fecha);
+            java.sql.Date fecha_selec = new java.sql.Date(d);  //Obtener solo la fecha
 
-            gv = new GestionVentas();
-            gv.setFecha(calendario);
+            SimpleDateFormat formato_selec = new SimpleDateFormat("dd-MM-YYYY");//Cambiar de formato
+            String fecha_s = formato_selec.format(fecha_selec);
 
-            tablaV.setModel(gv.cargarRegistro());
-            
-           obtenerTotal();
-            
+            v = new VentaDAOImpl();
+
+            tablaV.setModel(v.listar(fecha_s)); //Pasarle al modelo
+
+            lb_caja.setText(String.valueOf("$ " + obtenerTotal()));
+            lb_caja.setVisible(true);
 
         } catch (NullPointerException nullPointerException) {
 
             JOptionPane.showMessageDialog(null, "Ingrese una fecha correcta");
 
         }
-        
-        
+
+
     }//GEN-LAST:event_btnBuscarActionPerformed
 
     private void btn_mostrartodoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_mostrartodoActionPerformed
 
         Ganancia ganancia = new Ganancia();
-        
+
         ganancia.setLocationRelativeTo(null);
         ganancia.setVisible(true);
         ganancia.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        
-     
+
 
     }//GEN-LAST:event_btn_mostrartodoActionPerformed
 
@@ -326,8 +319,8 @@ public class Venta extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JLabel lb_caja;
+    public javax.swing.JLabel lb_caja;
     public javax.swing.JTable tablaV;
-    public javax.swing.JTextField tf_fAlreves;
+    public javax.swing.JTextField tf_fecha;
     // End of variables declaration//GEN-END:variables
 }

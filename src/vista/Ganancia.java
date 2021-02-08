@@ -5,7 +5,9 @@
  */
 package vista;
 
-import modelo.GestionVentas;
+import modelo.VentaDAOImpl;
+
+
 
 /**
  *
@@ -13,12 +15,12 @@ import modelo.GestionVentas;
  */
 public class Ganancia extends javax.swing.JFrame {
 
-    GestionVentas gv = new GestionVentas();
+   VentaDAOImpl v_dao = new VentaDAOImpl();
     
     
     public Ganancia() {
         initComponents();
-        tabla_ganancia.setModel(gv.mostrarTodo());
+        tabla_ganancia.setModel(v_dao.mostrarTodo());
     }
 
     /**

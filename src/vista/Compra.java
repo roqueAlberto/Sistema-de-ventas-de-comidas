@@ -14,7 +14,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 import javax.swing.table.DefaultTableModel;
-import static vista.Pedido.obtenerFecha;
+
 
 /**
  *
@@ -57,34 +57,38 @@ public class Compra extends javax.swing.JPanel {
 
         //Manejo de Fecha
         lb_fecha.setText(obtenerFecha());
-        lb_fechaAlreves.setText(devolverFecha());
-        tf_fechaAlreves.setText(devolverFecha());
+       
         tf_fechaAlreves.setVisible(false);
         lb_fechaAlreves.setVisible(false);
 
     }
 
-    public void insertarDatosCompras() {
+    public void addTabla() {
 
         String[] datos = new String[2];
+        
 
-        int precio = Integer.parseInt(tf_pago.getText());
+        String monto =tf_pago.getText();
+        String desc;
 
         if (tf_desc.getText().equals("")) {
-            datos[0] = "---";
+            desc = "---";
 
         } else {
 
-         datos[0] = tf_desc.getText();
+         desc = tf_desc.getText();
         }
-        datos[1] = String.valueOf(precio);
+        
+        
+        datos[0] = desc;
+        datos[1] = monto;
         modelo_compra.addRow(datos);
 
         tabla_compra.setModel(modelo_compra);
 
     }
 
-    public void obtenerTotal() {
+    public  void obtenerTotal() {
 
         int total = 0;
 
@@ -105,13 +109,7 @@ public class Compra extends javax.swing.JPanel {
         return formato_fecha.format(fecha);
     }
 
-    public static String devolverFecha() {
-        Date fecha_actual = new Date();
-        SimpleDateFormat formato_fecha_actual = new SimpleDateFormat("YYYY-MM-dd");
-
-        return formato_fecha_actual.format(fecha_actual);
-
-    }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -344,7 +342,7 @@ public class Compra extends javax.swing.JPanel {
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
 
             try {
-                insertarDatosCompras();
+                addTabla();
                 tf_desc.setText("");
                 tf_pago.setText("");
             } catch (Exception e) {
@@ -360,7 +358,7 @@ public class Compra extends javax.swing.JPanel {
     private void btn_agActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_agActionPerformed
 
         try {
-            insertarDatosCompras();
+            addTabla();
             this.tf_desc.setText("");
             this.tf_pago.setText("");
         } catch (Exception e) {

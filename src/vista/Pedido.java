@@ -15,7 +15,6 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
-import modelo.Comida;
 
 /**
  *
@@ -23,29 +22,22 @@ import modelo.Comida;
  */
 public class Pedido extends javax.swing.JPanel implements Runnable {
 
-    Comida comida = new Comida();
-    //Modelo para el combo
-    // DefaultComboBoxModel modelo_comida = new DefaultComboBoxModel(comida.mostrarComidas());
-
-    
     int total = 0;
-    
-   
 
-    public DefaultTableModel modelo = new DefaultTableModel() {
+    public DefaultTableModel modelo_tabla = new DefaultTableModel() {
 
+        // Denegar la edicion de celdas de la tabla
         @Override
-        public boolean isCellEditable(int f, int c) {
-            if (c == 6) {
+        public boolean isCellEditable(int fila, int columna) {
+            if (columna == 6) {
                 return true;
             } else {
                 return false;
             }
         }
     };
-    //*****************************************
 
-    //Propiedades para la Hora
+    // Hora
     String hora, minuto, segundo;
     Thread hilo;
 
@@ -68,86 +60,71 @@ public class Pedido extends javax.swing.JPanel implements Runnable {
             java.util.logging.Logger.getLogger(Pedido.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
 
-        modelo.addColumn("Nombre");
-        modelo.addColumn("Domicilio");
-        modelo.addColumn("Hora");
-        modelo.addColumn("Menú");
-        modelo.addColumn("Tipo");
-        modelo.addColumn("Cantidad");
-        modelo.addColumn("SubTotal");
+        modelo_tabla.addColumn("Nombre");
+        modelo_tabla.addColumn("Domicilio");
+        modelo_tabla.addColumn("Hora");
+        modelo_tabla.addColumn("Seccion");
+        modelo_tabla.addColumn("Tipo");
+        modelo_tabla.addColumn("Cantidad");
+        modelo_tabla.addColumn("SubTotal");
 
-        //Agregando el modelo(con las columnas) a la tabla
-        tabla.setModel(modelo);
+        //Agregando modelo a la tabla
+        tabla.setModel(modelo_tabla);
 
         tabla.getColumnModel().getColumn(5).setPreferredWidth(50);
         tabla.getColumnModel().getColumn(6).setPreferredWidth(50);
 
-        // cb_comida.setModel(modelo_comida);
-        //Manejo de Fecha
-        lb_fecha.setText(obtenerFecha());
+        //Mostrar fecha actual
+        lb_fecha.setText(getFecha());
 
         //Manejo de Hora
         hilo = new Thread(this);
         hilo.start();
 
-        tf_dateAlreves.setText(devolverFecha());
-        tf_dateAlreves.setVisible(false);
-
-      
-
     }
 
     public void insertarDatos() {
 
-        String d[] = new String[7];
-
-        Integer cantidad = (Integer) sp_cantidad.getValue();
-
-        int entero_precio = Integer.parseInt(tf_precio.getText());
-        int entero_cantidad = cantidad;
-        int total = entero_precio * entero_cantidad;
-
+        String nombre;
         if (tf_nom.getText().equals("")) {
-            d[0] = "---";
+            nombre = "---";
 
         } else {
-            d[0] = tf_nom.getText();
+            nombre = tf_nom.getText();
 
         }
-
+        String domicilio;
         if (tf_dom.getText().equals("")) {
-            d[1] = "---";
+            domicilio = "---";
         } else {
-            d[1] = tf_dom.getText();
+            domicilio = tf_dom.getText();
         }
 
-        d[2] = lb_horario.getText();
-        d[3] = cb_comida.getSelectedItem().toString();
-        d[4] = cb_tipo.getSelectedItem().toString();
-        d[5] = String.valueOf(cantidad);
-        d[6] = String.valueOf(total);
+        String horario = lb_horario.getText();
+        String seccion = cb_comida.getSelectedItem().toString();
+        String tipo = cb_tipo.getSelectedItem().toString();
+        String cantidad = sp_cantidad.getValue().toString();
 
-        modelo.addRow(d);
+        int ent_cant = Integer.parseInt(sp_cantidad.getValue().toString());
+        int ent_precio = Integer.parseInt(tf_precio.getText());
+        int sub_total = ent_cant * ent_precio;
 
-        tabla.setModel(modelo);
-        
-        
+        String s_subtotal = String.valueOf(sub_total);
+
+        // Agregar datos al arreglo
+        String addTabla[] = {nombre, domicilio, horario, seccion, tipo, cantidad, s_subtotal};
+
+        modelo_tabla.addRow(addTabla);
+
+        tabla.setModel(modelo_tabla);
 
     }
 
-    public static String obtenerFecha() {
+    public static String getFecha() {
         Date fecha = new Date();
         SimpleDateFormat formato_fecha = new SimpleDateFormat("dd/MM/YYYY");
 
         return formato_fecha.format(fecha);
-    }
-
-    public static String devolverFecha() {
-        Date fecha_actual = new Date();
-        SimpleDateFormat formato_fecha_actual = new SimpleDateFormat("YYYY-MM-dd");
-
-        return formato_fecha_actual.format(fecha_actual);
-
     }
 
     public void obtenerHora() {
@@ -160,6 +137,17 @@ public class Pedido extends javax.swing.JPanel implements Runnable {
         hora = calendario.get(Calendar.HOUR_OF_DAY) > 9 ? "" + calendario.get(Calendar.HOUR_OF_DAY) : "0" + calendario.get(Calendar.HOUR_OF_DAY);
         minuto = calendario.get(Calendar.MINUTE) > 9 ? "" + calendario.get(Calendar.MINUTE) : "0" + calendario.get(Calendar.MINUTE);
         segundo = calendario.get(Calendar.SECOND) > 9 ? "" + calendario.get(Calendar.SECOND) : "0" + calendario.get(Calendar.SECOND);
+    }
+
+    @Override
+    public void run() {
+        Thread current = Thread.currentThread();
+
+        while (current == hilo) {
+
+            obtenerHora();
+            lb_horario.setText(hora + ":" + minuto);
+        }
     }
 
     /**
@@ -197,7 +185,6 @@ public class Pedido extends javax.swing.JPanel implements Runnable {
         lb_fecha = new javax.swing.JLabel();
         lb_horario = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
-        tf_dateAlreves = new javax.swing.JTextField();
         jSeparator1 = new javax.swing.JSeparator();
         jLabel11 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
@@ -450,10 +437,7 @@ public class Pedido extends javax.swing.JPanel implements Runnable {
                                 .addGap(5, 5, 5))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, PanelPedidosLayout.createSequentialGroup()
                                 .addGroup(PanelPedidosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(PanelPedidosLayout.createSequentialGroup()
-                                        .addComponent(lb_fecha, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(tf_dateAlreves, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(lb_fecha, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addGroup(PanelPedidosLayout.createSequentialGroup()
                                         .addGap(50, 50, 50)
                                         .addComponent(jLabel2)
@@ -461,7 +445,7 @@ public class Pedido extends javax.swing.JPanel implements Runnable {
                                         .addComponent(jLabel1)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                         .addGroup(PanelPedidosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lb_horario, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(btn_agregarP, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))))
@@ -476,13 +460,11 @@ public class Pedido extends javax.swing.JPanel implements Runnable {
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(PanelPedidosLayout.createSequentialGroup()
                         .addGap(2, 2, 2)
-                        .addGroup(PanelPedidosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(tf_dateAlreves, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(PanelPedidosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(lb_fecha, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGroup(PanelPedidosLayout.createSequentialGroup()
-                                    .addGap(8, 8, 8)
-                                    .addComponent(lb_horario, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGroup(PanelPedidosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lb_fecha, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(PanelPedidosLayout.createSequentialGroup()
+                                .addGap(8, 8, 8)
+                                .addComponent(lb_horario, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGroup(PanelPedidosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(PanelPedidosLayout.createSequentialGroup()
                                 .addGap(19, 19, 19)
@@ -558,20 +540,9 @@ public class Pedido extends javax.swing.JPanel implements Runnable {
     public javax.swing.JLabel lb_precio;
     public javax.swing.JSpinner sp_cantidad;
     public javax.swing.JTable tabla;
-    public javax.swing.JTextField tf_dateAlreves;
     public javax.swing.JTextField tf_dom;
     public javax.swing.JTextField tf_nom;
     public javax.swing.JTextField tf_precio;
     // End of variables declaration//GEN-END:variables
 
-    @Override
-    public void run() {
-        Thread current = Thread.currentThread();
-
-        while (current == hilo) {
-
-            obtenerHora();
-            lb_horario.setText(hora + ":" + minuto);
-        }
-    }
 }

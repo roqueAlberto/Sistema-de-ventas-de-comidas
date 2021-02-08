@@ -1,63 +1,41 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
+
 package modelo;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.util.ArrayList;
-import javax.swing.JOptionPane;
-import modelo.Conexiones;
-import modelo.TipoComida;
-import modelo.Compra;
+import java.sql.Date;
+
+
 
 public class Gasto {
 
-    PreparedStatement ps;
-    ResultSet rs;
+    private String desc_gasto;
+    private int monto;
+    private String fecha;
 
-    public boolean datosCompra(ArrayList<Compra> compra) {
+    public String getFecha() {
+        return fecha;
+    }
 
-        Connection conexion = Conexiones.getConnection();
+    public void setFecha(String fecha) {
+        this.fecha = fecha;
+    }
+    
+    
 
-        try {
-            
-            int insercion = 0;
+    public String getDesc_gasto() {
+        return desc_gasto;
+    }
 
-            ps = conexion.prepareStatement("INSERT INTO compras (descripcion_com,sub_total,fecha) VALUES (?,?,?)");
-            
-            for(Compra c : compra) {
-                
-                    
-                    ps.setString(1, c.getDescripcion());
-                    ps.setInt(2, c.getCosto());
-                    ps.setDate(3, c.getFecha());
-            insercion=ps.executeUpdate();
-                
-            }
+    public void setDesc_gasto(String desc_gasto) {
+        this.desc_gasto = desc_gasto;
+    }
 
-            
+    public int getMonto() {
+        return monto;
+    }
 
-            
-
-            if (insercion > 0) {
-
-                return true;
-            } else {
-                return false;
-            }
-
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "No se puede insertar datos");
-            System.out.println(e);
-            return false;
-
-        }
-
+    public void setMonto(int monto) {
+        this.monto = monto;
     }
 
 }

@@ -4,7 +4,8 @@
  * and open the template in the editor.
  */
 package vista;
-import modelo.GestionGasto;
+import modelo.GastoDAO;
+import modelo.GastoDAOImpl;
 
 /**
  *
@@ -12,14 +13,14 @@ import modelo.GestionGasto;
  */
 public class Gasto extends javax.swing.JFrame {
     
-     GestionGasto gasto = new GestionGasto();
+    GastoDAO gasto = new GastoDAOImpl();
 
     /**
      * Creates new form Gasto
      */
     public Gasto() {
         initComponents();
-        tabla_gasto.setModel(gasto.mostrarTodo());
+        tabla_gasto.setModel(gasto.listar());
         
     }
 
